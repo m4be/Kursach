@@ -24,10 +24,28 @@ public class Server {
                                 new InputStreamReader(
                                         clientSocket.getInputStream()));
                         String request = reader.readLine();
-                        System.out.println("Request:" + request);
-                        String response = "Hello form server! Request is:";
-                        System.out.println(response + request);
-                        writer.write(response + request);
+                        System.out.println("Client:" + request);
+                        switch (request){
+                            case "Penis":{
+                                String response = "Hello form server!";
+                                System.out.println(response + request);
+                                writer.write(response + request);
+                            }
+                            case "Pizda":{
+                                String response = "Hello form server!";
+                                System.out.println(response + request);
+                                writer.write(response + request);
+                            }
+                            case "Boobs":{
+                                String response = "Hello form server!";
+                                System.out.println(response + request);
+                                writer.write(response + request);
+                            }
+                            default:{
+                                System.out.println("Incorrect request from user");
+                                writer.write("Incorrect request! Try again...");
+                            }
+                        }
                         writer.newLine();
                         writer.flush();
                     } finally {

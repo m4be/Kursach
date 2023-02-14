@@ -31,7 +31,7 @@ public class Frame extends JFrame implements ActionListener {
 
         Changer(view,10,10,300,50,"View Information");
         Changer(fetch,10,70,300,50,"Fetch Information");
-        Changer(submit,10,130,300,50,"Fetch Information");
+        Changer(submit,10,130,300,50,"Submit Information");
         this.add(view);
         this.add(fetch);
         this.add(submit);
@@ -47,12 +47,19 @@ public class Frame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         switch (cmd){
-            case  "View Information":
+            case  "View Information":{
                 new Sender("Penis");
-            case "Fetch Information":
+                break;
+            }
+            case "Fetch Information":{
                 new Sender("Pizda");
-            case "Submit Information":
+                break;
+            }
+            case "Submit Information":{
                 new Sender("Boobs");
+                break;
+            }
+
         }
     }
 }

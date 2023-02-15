@@ -33,7 +33,8 @@ public class Server {
                             }
                             case "Pizda":{
                                 response = "Fetching form server! ";
-                                DBControl.DBConnect();
+                                String db = "orders";
+                                DBControl.DBFetch(db);
                                 break;
                             }
                             case "Boobs":{

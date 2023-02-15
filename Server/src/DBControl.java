@@ -1,16 +1,19 @@
 import java.sql.*;
+import java.util.concurrent.ExecutionException;
+
 public class DBControl {
-    public static void DBConnect(){
+    static Connection connection;
+    public static void DBFetch(String dataBaseSelected){
         Connection connection;
         try {
             connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/Orders",
+                    "jdbc:mysql://localhost:3306/administration",
                     "root", "1862");
 
             Statement statement;
             statement = connection.createStatement();
             ResultSet resultSet;
-            resultSet = statement.executeQuery("select * from info");
+            resultSet = statement.executeQuery("select * from " + dataBaseSelected);
 
             int id;
             String product;
@@ -30,7 +33,24 @@ public class DBControl {
             resultSet.close();
             statement.close();
             connection.close();
-        }catch (Exception e) {
+        }catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void DBAdd() {
+        try {
+            connection = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/Orders",
+                    "root", "1862");
+
+            Statement statement;
+            statement = connection.createStatement();
+            ResultSet resultSet;
+            resultSet = statement.executeQuery("insert into info");
+
+
+        }catch (SQLException e){
             System.out.println(e);
         }
     }

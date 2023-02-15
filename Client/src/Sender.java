@@ -15,27 +15,27 @@ public class Sender {
                 // адрес - локальный хост, порт - 8000, такой же как у сервера
                 clientSocket = new Socket("localhost", 8000); // этой строкой мы запрашиваем
                 //  у сервера доступ на соединение
-                reader = new BufferedReader(new InputStreamReader(System.in));
+                reader = new BufferedReader(
+                        new InputStreamReader(
+                                System.in));
                 // читать соообщения с сервера
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                in = new BufferedReader(
+                        new InputStreamReader(
+                                clientSocket.getInputStream()));
                 // писать туда же
-                out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-
-                System.out.println("Enter size:");
+                out = new BufferedWriter(
+                        new OutputStreamWriter(
+                                clientSocket.getOutputStream()));
                 // если соединение произошло и потоки успешно созданы - мы можем
                 //  работать дальше и предложить клиенту что то ввести
                 // если нет - вылетит исключение
 
-                //String word = reader.readLine(); // ждём пока клиент что-нибудь
-
-                // не напишет в консоль
                 out.write(msg + "\n"); // отправляем сообщение на сервер
 
                 out.flush();
                 String serverWord = in.readLine(); // ждём, что скажет сервер
                 System.out.println(serverWord); // получив - выводим на экран
             } finally { // в любом случае необходимо закрыть сокет и потоки
-                System.out.println("Client stopping...");
                 clientSocket.close();
                 in.close();
                 out.close();

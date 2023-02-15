@@ -23,31 +23,34 @@ public class Server {
                         reader = new BufferedReader(
                                 new InputStreamReader(
                                         clientSocket.getInputStream()));
+                        String response;
                         String request = reader.readLine();
-                        System.out.println("Client:" + request);
+                        System.out.println("Client: " + request);
                         switch (request){
                             case "Penis":{
-                                String response = "Hello form server!";
-                                System.out.println(response + request);
-                                writer.write(response + request);
+                                response = "Viewing form server! ";
+                                break;
                             }
                             case "Pizda":{
-                                String response = "Hello form server!";
-                                System.out.println(response + request);
-                                writer.write(response + request);
+                                response = "Fetching form server! ";
+                                String db = "orders";
+                                DBControl.DBFetch(db);
+                                break;
                             }
                             case "Boobs":{
-                                String response = "Hello form server!";
-                                System.out.println(response + request);
-                                writer.write(response + request);
+                                response = "Submitting to server! ";
+                                break;
                             }
                             default:{
-                                System.out.println("Incorrect request from user");
-                                writer.write("Incorrect request! Try again...");
+                                response = "Incorrect request from user! ";
+                                break;
                             }
                         }
+                        System.out.println(response + request);
+                        writer.write(response + request);
                         writer.newLine();
                         writer.flush();
+
                     } finally {
                         clientSocket.close();
                         reader.close();

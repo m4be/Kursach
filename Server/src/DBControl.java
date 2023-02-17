@@ -1,57 +1,62 @@
 import java.sql.*;
-import java.util.concurrent.ExecutionException;
 
 public class DBControl {
-    static Connection connection;
-    public static void DBFetch(String dataBaseSelected){
-        Connection connection;
+    public static String orderFetch() {
+        Connection con;
+        //String response = null;
+        String response = "";
         try {
-            connection = DriverManager.getConnection(
+            con = DriverManager.getConnection(
                     "jdbc:mysql://localhost:3306/administration",
                     "root", "1862");
 
-            Statement statement;
-            statement = connection.createStatement();
-            ResultSet resultSet;
-            resultSet = statement.executeQuery("select * from " + dataBaseSelected);
+            Statement st;
+            st = con.createStatement();
+            ResultSet rs;
+            rs = st.executeQuery("select * from orders");
 
-            int id;
-            String product;
-            String supplier;
-            int quantity;
-            String deliveryDate;
-
-            while (resultSet.next()) {
-                id = resultSet.getInt("id");
-                product = resultSet.getString("product").trim();
-                supplier = resultSet.getString("supplier").trim();
-                quantity = resultSet.getInt("quantity");
-                deliveryDate = resultSet.getString("deli_date").trim();
-                System.out.println(" Id: " + id
-                        + "\n Product: " + product + "\n Supplier: " + supplier + "\n Quantity: " + quantity + "\n Date of delivery: " + deliveryDate);
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String product = rs.getString("product").trim();
+                String supplier = rs.getString("supplier").trim();
+                int quantity = rs.getInt("quantity");
+                Date deliveryDate = rs.getDate("deli_date");
+                response += "Id: " + id +
+                        "Product: " + product +
+                        "Supplier: " + supplier +
+                        "Quantity: " + quantity +
+                        "Date of delivery: " + deliveryDate;
+                System.out.println(response);
             }
-            resultSet.close();
-            statement.close();
-            connection.close();
-        }catch (SQLException e) {
+            rs.close();
+            st.close();
+            con.close();
+
+        } catch (SQLException e) {
             System.out.println(e);
         }
-    }
-
-    public static void DBAdd() {
-        try {
-            connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/Orders",
-                    "root", "1862");
-
-            Statement statement;
-            statement = connection.createStatement();
-            ResultSet resultSet;
-            resultSet = statement.executeQuery("insert into info");
-
-
-        }catch (SQLException e){
-            System.out.println(e);
-        }
+        return response;
     }
 }
+
+//    public static void orderAdd(int addId, String addProduct, String addSupplier, int addQuantity, String addDeliDate) {
+  //      try {
+    //        connection = DriverManager.getConnection(
+      //            "jdbc:mysql://localhost:3306/administration",
+         //           "root", "1862");
+
+        //    Statement statement;
+          //  statement = connection.createStatement();
+            //ResultSet resultSet;
+            //resultSet = statement.executeQuery("insert into orders " +
+              //      "values (" + addId + addProduct + addSupplier + addQuantity + addDeliDate + ");");
+
+//            resultSet.close();
+  //          statement.close();
+    //        connection.close();
+
+      //  }catch (SQLException e){
+        //    System.out.println(e);
+       // }
+   // }
+//}

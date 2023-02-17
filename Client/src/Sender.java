@@ -35,10 +35,15 @@ public class Sender {
                 out.flush();
                 String serverWord = in.readLine(); // ждём, что скажет сервер
                 System.out.println(serverWord); // получив - выводим на экран
+
+                Frame.text.setText(serverWord);
+
+
             } finally { // в любом случае необходимо закрыть сокет и потоки
                 clientSocket.close();
                 in.close();
                 out.close();
+
             }
         } catch (IOException e) {
             System.err.println(e);

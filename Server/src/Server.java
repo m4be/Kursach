@@ -15,7 +15,7 @@ public class Server {
                 server = new ServerSocket(8000);
                 System.out.println("Server is running!");
                 clientSocket = server.accept();
-                while (true)
+                while (true) {
                     try {
                         writer = new BufferedWriter(
                                 new OutputStreamWriter(
@@ -26,22 +26,21 @@ public class Server {
                         String response;
                         String request = reader.readLine();
                         System.out.println("Client: " + request);
-                        switch (request){
-                            case "Penis":{
+                        switch (request) {
+                            case "Penis": {
                                 response = "Viewing form server! ";
                                 break;
                             }
-                            case "Pizda":{
-                                response = "Fetching form server! ";
-                                String db = "orders";
-                                DBControl.DBFetch(db);
+                            case "Pizda": {
+                                response = "Fetching form server! " + DBControl.orderFetch();
                                 break;
                             }
-                            case "Boobs":{
+                            case "Boobs": {
                                 response = "Submitting to server! ";
+
                                 break;
                             }
-                            default:{
+                            default: {
                                 response = "Incorrect request from user! ";
                                 break;
                             }
@@ -57,7 +56,8 @@ public class Server {
                         writer.close();
                         clientSocket = server.accept();
                     }
-            } finally {
+                }
+            }finally {
                 server.close();
                 System.out.println("Server has stopped!");
             }

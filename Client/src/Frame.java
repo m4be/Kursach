@@ -14,6 +14,8 @@ public class Frame extends JFrame implements ActionListener {
 
     private JPanel currentPanel;
 
+    public static JTextArea text = new JTextArea();
+
     private JTextField name;
     private JTextField password;
     private JButton submitAuthorization;
@@ -23,8 +25,6 @@ public class Frame extends JFrame implements ActionListener {
         b.setBounds(x,y,w,h);
         b.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
         b.setText(name);
-//b.setBackground(Color.BLACK);
-//b.setForeground(Color.GREEN);
     }
 
     Frame() {
@@ -39,7 +39,11 @@ public class Frame extends JFrame implements ActionListener {
 
         Changer(view,10,70,300,50,"View Information");
         Changer(fetch,10,130,300,50,"Fetch Information");
-        Changer(submit,10,190,300,50,"Fetch Information");
+        Changer(submit,10,190,300,50,"Submit Information");
+
+        text.setBounds(10,400,400,400);
+        this.add(text);
+
         this.add(view);
         this.add(fetch);
         this.add(submit);
@@ -53,6 +57,8 @@ public class Frame extends JFrame implements ActionListener {
 
         this.setVisible(true);
     }
+
+
 
     private JPanel Authorization(){
         JPanel panel = new JPanel();
@@ -72,7 +78,7 @@ public class Frame extends JFrame implements ActionListener {
         JLabel passwordLabel = new JLabel("Password: ");
         passwordLabel.setBounds(3,40,68,30);
 
-        submitAuthorization = new JButton("Auth");
+        submitAuthorization = new JButton("Log in");
         submitAuthorization.setBounds(120,85,100,30);
 
         submitRegistration = new JButton("Register");
@@ -101,15 +107,12 @@ public class Frame extends JFrame implements ActionListener {
             case "Submit Information":
                 new Sender("Boobs");
                 break;
-            case "Auth":
-                new Sender("Auth: " + name.getText()+ " " + password.getText());
+            case "Authentication":
+                new Sender("Log_in " + name.getText() + " " + password.getText());
                 break;
             case "Register":
-                new Sender("Register: " + name.getText()+ " " + password.getText());
+                new Sender("Register " + name.getText() + " " + password.getText());
                 break;
-
-//1 )Попробовать через 1 панель в которой будет менятся тип currentPanel
-//2 ) Добавить аторизацию и регистрациюв одно окно чтобы не ебать мозги
         }
     }
 }

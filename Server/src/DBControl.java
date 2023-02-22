@@ -1,57 +1,64 @@
 import java.sql.*;
-import java.util.concurrent.ExecutionException;
 
 public class DBControl {
-    static Connection connection;
-    public static void DBFetch(String dataBaseSelected){
-        Connection connection;
+    public static String getData() {
+        Connection con;
+        String response = "";
         try {
-            connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/administration",
-                    "root", "1862");
+            con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/AutoPark",
+                    "root", "1234");
 
-            Statement statement;
-            statement = connection.createStatement();
-            ResultSet resultSet;
-            resultSet = statement.executeQuery("select * from " + dataBaseSelected);
+            Statement st;
+            st = con.createStatement();
+            ResultSet rs;
+            rs = st.executeQuery("select * from Cars");
 
-            int id;
-            String product;
-            String supplier;
-            int quantity;
-            String deliveryDate;
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name").trim();
+                int amount  = rs.getInt("amount");
 
-            while (resultSet.next()) {
-                id = resultSet.getInt("id");
-                product = resultSet.getString("product").trim();
-                supplier = resultSet.getString("supplier").trim();
-                quantity = resultSet.getInt("quantity");
-                deliveryDate = resultSet.getString("deli_date").trim();
-                System.out.println(" Id: " + id
-                        + "\n Product: " + product + "\n Supplier: " + supplier + "\n Quantity: " + quantity + "\n Date of delivery: " + deliveryDate);
+                response += id + " " + name + " " + amount;
+
+                System.out.println(response);
             }
-            resultSet.close();
-            statement.close();
-            connection.close();
-        }catch (SQLException e) {
+            rs.close();
+            st.close();
+            con.close();
+
+        } catch (SQLException e) {
             System.out.println(e);
         }
+        return response;
     }
 
-    public static void DBAdd() {
+    public static boolean Authorize(String name, String password){
+        Connection con;
+        boolean result = false;
         try {
-            connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/Orders",
-                    "root", "1862");
+            con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/AutoPark",
+                    "root", "1234");
 
-            Statement statement;
-            statement = connection.createStatement();
-            ResultSet resultSet;
-            resultSet = statement.executeQuery("insert into info");
+            Statement st;
+            st = con.createStatement();
+            ResultSet rs;
+            rs = st.executeQuery("select * from Users where name = \"" + name + "\" and password = \"" + password + "\"");
 
+            if(rs.next())
+                result = true;
 
-        }catch (SQLException e){
+            rs.close();
+            st.close();
+            con.close();
+
+        } catch (SQLException e) {
             System.out.println(e);
         }
+
+
+        return result;
     }
 }
+

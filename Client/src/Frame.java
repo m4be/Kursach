@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,20 +9,28 @@ public class Frame extends JFrame implements ActionListener {
     protected JButton view = new JButton();
     protected JButton fetch = new JButton();
     protected JButton submit = new JButton();
-
-//private JPanel author = Authorization(); //
-//private JPanel registr = Registration(); //
-
     private JPanel currentPanel;
-
-    public static JTextArea text = new JTextArea();
+    //public static JTextArea text = new JTextArea();
 
     private JTextField name;
     private JTextField password;
     private JButton submitAuthorization;
     private JButton submitRegistration;
 
-    void Changer(JButton b,int x, int y, int w, int h,String name){
+    private JTable OrderInfo(){
+        String[] columnNames = {"Id", "Product", "Supplier", "Quantity", "Delivery date"};
+        Object[][] data = {};
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        JTable orderInfo = new JTable();
+
+        orderInfo.setLayout(null);
+        orderInfo.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
+        //orderInfo.setBounds();
+
+        return orderInfo;
+    }
+
+    void Changer(JButton b,int x, int y, int w, int h, String name){
         b.setBounds(x,y,w,h);
         b.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
         b.setText(name);
@@ -41,13 +50,14 @@ public class Frame extends JFrame implements ActionListener {
         Changer(fetch,10,130,300,50,"Fetch Information");
         Changer(submit,10,190,300,50,"Submit Information");
 
-        text.setBounds(10,400,400,400);
-        this.add(text);
+        //text.setBounds(10,400,400,400);
+        //this.add(text);
 
         this.add(view);
         this.add(fetch);
         this.add(submit);
         this.add(Authorization());
+        this.add(OrderInfo());
 
         view.addActionListener(this);
         fetch.addActionListener(this);

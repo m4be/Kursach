@@ -21,11 +21,8 @@ public class DBControl {
                 String supplier = rs.getString("supplier").trim();
                 int quantity = rs.getInt("quantity");
                 Date deliveryDate = rs.getDate("deli_date");
-                response += "Id: " + id +
-                        "Product: " + product +
-                        "Supplier: " + supplier +
-                        "Quantity: " + quantity +
-                        "Date of delivery: " + deliveryDate;
+                response += id + " " + product + " " + supplier + " " + quantity + " " + deliveryDate;
+
                 System.out.println(response);
             }
             rs.close();

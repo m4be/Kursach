@@ -3,43 +3,31 @@ import java.net.Socket;
 
 public class Sender {
 
-    private static Socket clientSocket; //сокет для общения
-    private static BufferedReader reader; // нам нужен ридер читающий с консоли, иначе как
-    // мы узнаем что хочет сказать клиент?
-    private static BufferedReader in; // поток чтения из сокета
-    private static BufferedWriter out; // поток записи в сокет
+    private static Socket clientSocket;
+    private static BufferedReader in;
+    private static BufferedWriter out;
 
     Sender(String msg){
         try {
             try {
-                // адрес - локальный хост, порт - 8000, такой же как у сервера
-                clientSocket = new Socket("localhost", 8000); // этой строкой мы запрашиваем
-                //  у сервера доступ на соединение
-                reader = new BufferedReader(
-                        new InputStreamReader(
-                                System.in));
-                // читать соообщения с сервера
+                clientSocket = new Socket("localhost", 8000);
                 in = new BufferedReader(
                         new InputStreamReader(
                                 clientSocket.getInputStream()));
-                // писать туда же
                 out = new BufferedWriter(
                         new OutputStreamWriter(
                                 clientSocket.getOutputStream()));
-                // если соединение произошло и потоки успешно созданы - мы можем
-                //  работать дальше и предложить клиенту что то ввести
-                // если нет - вылетит исключение
 
-                out.write(msg + "\n"); // отправляем сообщение на сервер
+                out.write(msg + "\n");
 
                 out.flush();
-                String serverWord = in.readLine(); // ждём, что скажет сервер
-                System.out.println(serverWord); // получив - выводим на экран
+                String serverWord = in.readLine();
+                System.out.println(serverWord);
 
-                Frame.text.setText(serverWord);
+                //Frame.text.setText(serverWord);
 
 
-            } finally { // в любом случае необходимо закрыть сокет и потоки
+            } finally {
                 clientSocket.close();
                 in.close();
                 out.close();

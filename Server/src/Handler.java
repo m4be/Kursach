@@ -50,6 +50,10 @@ public class Handler implements Runnable {
                     response = "Submitting to server! ";
                     break;
                 }
+                case "800": {
+                    response = "801 " + DBControl.getData();
+                    break;
+                }
                 default: {
                     response = "Incorrect request from user! ";
                     break;

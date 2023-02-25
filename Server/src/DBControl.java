@@ -19,7 +19,7 @@ public class DBControl {
                 String name = rs.getString("name").trim();
                 int amount  = rs.getInt("amount");
 
-                response += id + " " + name + " " + amount;
+                response += id + " " + name + " " + amount + " ";
 
                 System.out.println(response);
             }

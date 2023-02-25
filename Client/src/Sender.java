@@ -7,7 +7,8 @@ public class Sender {
     private static BufferedReader in;
     private static BufferedWriter out;
 
-    Sender(String msg){
+
+    Sender(String msg, Frame frm){
         try {
             try {
                 clientSocket = new Socket("localhost", 8000);
@@ -20,10 +21,18 @@ public class Sender {
 
                 out.write(msg + "\n");
 
+
+
                 out.flush();
                 String serverWord = in.readLine();
-                System.out.println(serverWord);
 
+
+
+                //Тут распознание кодов добавить (можно через отдельный класс, но тогда
+                // придется передавать ссылку на фрейм)
+
+                System.out.println("Ответочка" + serverWord);
+                frm.getServerMessage(serverWord); //Переименовать
 
 
 

@@ -9,6 +9,8 @@ public class Frame extends JFrame implements ActionListener {
 
 
 
+    JTable table;
+    DefaultTableModel model;
 
     private JPanel currentPanel;
     private JTextField name;
@@ -18,7 +20,7 @@ public class Frame extends JFrame implements ActionListener {
     private JButton submitAdmin;
     private JButton submitExit;
 
-
+    private boolean authorized;
 
     Frame() {
         int width = 720;
@@ -35,9 +37,11 @@ public class Frame extends JFrame implements ActionListener {
         this.add(Menu());
         this.add(MainPanel());
         this.add(SubPanel());
-        this.add(Refresh());
+        this.add(RefreshButton());
 
         this.setVisible(true);
+
+        authorized = false;
     }
 
 
@@ -104,7 +108,7 @@ public class Frame extends JFrame implements ActionListener {
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
         panel.setBounds(50,160,400,380);
 
-        String[] columnNames = {"First Name", "Last Name", ""};
+/*        String[] columnNames = {"First Name", "Last Name", "Action"};
         Object[][] data =
                 {
                         {"Homer", "Simpson", "delete Homer"},
@@ -112,9 +116,15 @@ public class Frame extends JFrame implements ActionListener {
                         {"Bart",  "Simpson", "delete Bart"},
                         {"Lisa",  "Simpson", "delete Lisa"},
                 };
+*/
+        model = new DefaultTableModel();
+        table = new JTable( model );
 
-        DefaultTableModel model = new DefaultTableModel(data, columnNames);
-        JTable table = new JTable( model );
+        model.addColumn("ID");
+        model.addColumn("Name");
+        model.addColumn("Amount");
+        model.addColumn("Action");
+
 
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
@@ -131,11 +141,13 @@ public class Frame extends JFrame implements ActionListener {
 
                 System.out.println(modelRow);
 
+                //model.setValueAt("1",modelRow,1);
+
                 ((DefaultTableModel)table.getModel()).removeRow(modelRow);
             }
         };
 
-        ButtonColumn buttonColumn = new ButtonColumn(table, delete, 2);
+        ButtonColumn buttonColumn = new ButtonColumn(table, delete, 3);
         buttonColumn.setMnemonic(KeyEvent.VK_D);
 
         panel.add(scrollPane);
@@ -156,7 +168,7 @@ public class Frame extends JFrame implements ActionListener {
         return panel;
     }
 
-    private JButton Refresh(){
+    private JButton RefreshButton(){
         JButton button = new JButton("Refresh");
         button.setLayout(null);
         button.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
@@ -166,7 +178,43 @@ public class Frame extends JFrame implements ActionListener {
         return button;
     }
 
+    void getServerMessage(String text){
+        String[] str = text.split(" ");
+        switch (str[0]){
+            case "201":
+                authorized = true;
+                refresh();
+                break;
 
+
+            case "801":
+                System.out.println("\n dlina:" + (str.length - 1) + "\n");
+                model.setRowCount(0); //Очистка таблицы
+                for(int i = 0; i < (((str.length) - 1) / 3);i++)
+                    model.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"take"});
+
+
+
+        }
+
+
+
+    }
+
+    void refresh(){
+        if(authorized)
+            new Sender("800", this);
+        else{
+            System.out.println("НЕ авторизован");
+        }
+        //else Выкинуть окно с ошибкой
+    }
+
+    void exit(){
+        authorized = false;
+        model.setRowCount(0);
+
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -174,21 +222,21 @@ public class Frame extends JFrame implements ActionListener {
         String cmd = e.getActionCommand();
         switch (cmd){
             case "Auth":
-                new Sender("200 " + name.getText() + " " + password.getText());
+                new Sender("200 " + name.getText() + " " + password.getText(),this);
                 break;
             case "Register":
-                new Sender("300 " + name.getText()+ " " + password.getText());
+                new Sender("300 " + name.getText()+ " " + password.getText(),this);
                 break;
             case "Admin":
-                new Sender("400 " + name.getText()+ " " + password.getText());
+                new Sender("400 " + name.getText()+ " " + password.getText(),this);
                 break;
             case "Exit":
-                new Sender("500: " + name.getText()+ " " + password.getText());
+                new Sender("500 " + name.getText()+ " " + password.getText(),this);
+                exit();
                 break;
-
-
-
-
+            case "Refresh":
+                refresh();
+                break;
 
         }
     }
@@ -233,7 +281,10 @@ public class Frame extends JFrame implements ActionListener {
 
 
 
-    800 - Перезагрузка данных
+    800 - Перезагрузка данных (ЗАпрос серверу)
+    801 - Отправка данных (успех) (ответ пользователю)
+
+
     (Отпрака актуального списка машин (т.е. из БД))
     + Список заказаных/админ машин
 

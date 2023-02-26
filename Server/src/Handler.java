@@ -34,24 +34,40 @@ public class Handler implements Runnable {
             String[] str = request.split(" ");
 
             switch (str[0]) {
-                case "200": {
-                    if(DBControl.Authorize(str[1],str[2]))
-                    {response = "201";}
+                case "200": { //Авторизация
+                    if(DBControl.AuthorizeUser(str[1],str[2])) //Если есть такой логин пароль
+                    {response = "201";} //То авторизация успешна
                     else{
-                        response = "101";
+                        response = "101";//Не успешна
                     }
                     break;
                 }
-                case "300": {
-                    response = "Fetching form server! " + DBControl.getData();
+                case "300": { //Регистрация
+                    if(DBControl.RegisterUser(str[1],str[2])){//Если такой учетки нет
+                    response = "301";//Регистрация успешна
+                    }
+                    else{
+                        response = "102";//Не уcпешна
+                    }
                     break;
                 }
-                case "400": {
-                    response = "Submitting to server! ";
+                case "400": { //Админ
+                    if(DBControl.AuthorizeAdmin(str[1],str[2])){//Если такой учетки нет
+                        response = "401";//Регистрация успешна
+                    }
+                    else{
+                        response = "103";//Не уcпешна
+                    }
+                    break;
+                }
+
+                case "500": {
+                    //Пользоваетль вышел из учетки
+                    response = "501";
                     break;
                 }
                 case "800": {
-                    response = "801 " + DBControl.getData();
+                    response = "801 " + DBControl.getData(); //Отправка таблицы
                     break;
                 }
                 default: {

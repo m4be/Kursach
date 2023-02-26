@@ -21,6 +21,7 @@ public class Frame extends JFrame implements ActionListener {
     private JButton submitExit;
 
     private boolean authorized;
+    private boolean admin;
 
     Frame() {
         int width = 720;
@@ -42,6 +43,7 @@ public class Frame extends JFrame implements ActionListener {
         this.setVisible(true);
 
         authorized = false;
+        admin = false;
     }
 
 
@@ -185,13 +187,22 @@ public class Frame extends JFrame implements ActionListener {
                 authorized = true;
                 refresh();
                 break;
+            case "301":
 
+                //Выдать окно что пользователь добвлен и теперь можно входить
+
+                break;
+
+            case "401":
+                admin = true;
+
+                break;
 
             case "801":
-                System.out.println("\n dlina:" + (str.length - 1) + "\n");
+                System.out.println("\n dlina:" + (str.length - 1) + "\n");//Убрать!!!!!!!!
                 model.setRowCount(0); //Очистка таблицы
-                for(int i = 0; i < (((str.length) - 1) / 3);i++)
-                    model.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"take"});
+                for(int i = 0; i < (((str.length) - 1) / 3);i++) // Каждый 3 элемент не считая нулевого
+                    model.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"take"}); //Добавляем строки
 
 
 
@@ -212,6 +223,7 @@ public class Frame extends JFrame implements ActionListener {
 
     void exit(){
         authorized = false;
+        admin = false;
         model.setRowCount(0);
 
     }
@@ -247,7 +259,7 @@ public class Frame extends JFrame implements ActionListener {
     200 - Авторизация    201 - Успешно
     300 - Регистрация    301 - Успешно
     400 - Админ          401 - Успешно
-    500 - Выход из учетки
+    500 - Выход из учетки 501 - Принято
 
     Если удалось зайти то глобальная переменная Authorized == true
 

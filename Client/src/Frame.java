@@ -186,17 +186,40 @@ public class Frame extends JFrame implements ActionListener {
             case "201":
                 authorized = true;
                 refresh();
+                JOptionPane.showMessageDialog(this,"Authorization successful",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
                 break;
             case "301":
-
-                //Выдать окно что пользователь добвлен и теперь можно входить
-
+                JOptionPane.showMessageDialog(this,"Registration successful",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
                 break;
 
             case "401":
                 admin = true;
-
+                JOptionPane.showMessageDialog(this,"Admin successful",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
                 break;
+
+            case "101":
+                JOptionPane.showMessageDialog(this,"Account does not exist \nor incorrect input",
+                        "Fail", JOptionPane.WARNING_MESSAGE);
+                break;
+
+            case "102":
+                JOptionPane.showMessageDialog(this,"Account exist",
+                        "Fail", JOptionPane.WARNING_MESSAGE);
+                break;
+
+            case "103":
+                JOptionPane.showMessageDialog(this,"Admin account does not exist \nor incorrect input",
+                        "Fail", JOptionPane.WARNING_MESSAGE);
+                break;
+            case "501":
+                JOptionPane.showMessageDialog(this,"Exit successful",
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                break;
+
+
 
             case "801":
                 System.out.println("\n dlina:" + (str.length - 1) + "\n");//Убрать!!!!!!!!
@@ -216,9 +239,9 @@ public class Frame extends JFrame implements ActionListener {
         if(authorized)
             new Sender("800", this);
         else{
-            System.out.println("НЕ авторизован");
+            JOptionPane.showMessageDialog(this,"You are not authorized",
+                    "Fail", JOptionPane.WARNING_MESSAGE);
         }
-        //else Выкинуть окно с ошибкой
     }
 
     void exit(){
@@ -228,22 +251,46 @@ public class Frame extends JFrame implements ActionListener {
 
     }
 
+    boolean checkRegex(String name,String password){
+        return (name.matches("\\w+") && password.matches("\\w+"));
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println(e.getActionCommand());
+        String regex = "Incorrect input \nOnly letters, numbers and underscore";
         String cmd = e.getActionCommand();
         switch (cmd){
             case "Auth":
-                new Sender("200 " + name.getText() + " " + password.getText(),this);
+                if(checkRegex(name.getText(),password.getText())){
+                    new Sender("200 " + name.getText() + " " + password.getText(),this);
+                }
+                else{
+                    JOptionPane.showMessageDialog(this,regex,
+                            "Fail", JOptionPane.WARNING_MESSAGE);
+                }
                 break;
             case "Register":
-                new Sender("300 " + name.getText()+ " " + password.getText(),this);
+                if(checkRegex(name.getText(),password.getText())){
+                    new Sender("300 " + name.getText()+ " " + password.getText(),this);
+                }
+                else{
+                    JOptionPane.showMessageDialog(this,regex,
+                            "Fail", JOptionPane.WARNING_MESSAGE);
+                }
                 break;
             case "Admin":
-                new Sender("400 " + name.getText()+ " " + password.getText(),this);
+                if(checkRegex(name.getText(),password.getText())){
+                    new Sender("400 " + name.getText()+ " " + password.getText(),this);
+                }
+                else{
+                    JOptionPane.showMessageDialog(this,regex,
+                            "Fail", JOptionPane.WARNING_MESSAGE);
+                }
+
                 break;
             case "Exit":
-                new Sender("500 " + name.getText()+ " " + password.getText(),this);
+                new Sender("500",this);
                 exit();
                 break;
             case "Refresh":
@@ -256,27 +303,27 @@ public class Frame extends JFrame implements ActionListener {
 
     /*
     Список кодов:
-    200 - Авторизация    201 - Успешно
-    300 - Регистрация    301 - Успешно
-    400 - Админ          401 - Успешно
-    500 - Выход из учетки 501 - Принято
+    200 - Авторизация    201 - Успешно     🆗
+    300 - Регистрация    301 - Успешно     🆗
+    400 - Админ          401 - Успешно     🆗
+    500 - Выход из учетки 501 - Принято    🆗
 
-    Если удалось зайти то глобальная переменная Authorized == true
+    Если удалось зайти то глобальная переменная Authorized == true 🆗
 
     (И наверное переменные для имени (чтобы зафиксировать учетку пользователя (Ато понапишет говна )))
 
-    После выхода == false
+    После выхода == false 🆗
 
-    Если переменная False => на самой форме выскакивает ошибка при попытке отправить запрос в бд (Таблица)
+    Если переменная False => на самой форме выскакивает ошибка при попытке отправить запрос в бд (Таблица) 🆗
 
     Если Админ - то подгружается немного другие данные (Данные о заказах ВСЕХ пользователей)
-    Admin == true
+    Admin == true 🆗
 
     Сделать файл ДЕкодер (ответственный за преобразование данных)
 
-    101 - Авторизация не удалась (Нет такой учетки)
-    102 - регистрация не удалась (Такая учетка уже есть)
-    103 - Вход в админку не удался (Нет такой учетки)
+    101 - Авторизация не удалась (Нет такой учетки) 🆗
+    102 - регистрация не удалась (Такая учетка уже есть) 🆗
+    103 - Вход в админку не удался (Нет такой учетки) 🆗
 
     Для того чтобы указывать пользователю правильные ошибки
 
@@ -293,9 +340,15 @@ public class Frame extends JFrame implements ActionListener {
 
 
 
-    800 - Перезагрузка данных (ЗАпрос серверу)
-    801 - Отправка данных (успех) (ответ пользователю)
+    800 - Перезагрузка данных (ЗАпрос серверу) 🆗
+    801 - Отправка данных (успех) (ответ пользователю) 🆗
 
+    После загрузки основной таблицы загружается дополнительная
+
+    900 - Отправка запроса с нужным флагом authorized/admin
+    901 - Успешный ответ пользователю
+    902 - Успешный ответ админу
+    903 - Не удачно
 
     (Отпрака актуального списка машин (т.е. из БД))
     + Список заказаных/админ машин
@@ -303,7 +356,7 @@ public class Frame extends JFrame implements ActionListener {
     Сервер присылает либо ошибку
     Либо полный список для указанного пользователя
 
-    КНОПКА == if Admin then кнопка на главной панели пропадает
+    //(Бред)КНОПКА == if Admin then кнопка на главной панели пропадает
 
     !!!!! После каждого нажатия на кнопку дополнительно обновляется вся форма для показа корректной информации
 

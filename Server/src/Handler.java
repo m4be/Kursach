@@ -70,8 +70,22 @@ public class Handler implements Runnable {
                     response = "801 " + DBControl.getData(); //Отправка таблицы
                     break;
                 }
+
+                case "900": {
+                    if(str[1].equals("admin")){
+                        response = "902 " + DBControl.getUserInfo(true, null);
+                    }
+                    else if (str[1].equals("user")) {
+                        response = "901 " + DBControl.getUserInfo(false, str[2]);
+                    }
+                    else{
+                        response = "903";
+                    }
+                    break;
+                }
+
                 default: {
-                    response = "Incorrect request from user! ";
+                    response = "Incorrect request from user! request was: " + request;
                     break;
                 }
             }

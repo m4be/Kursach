@@ -33,6 +33,48 @@ public class DBControl {
         return response;
     }
 
+    public static String getUserInfo(boolean flag, String userName){
+        Connection con;
+        String response = "";
+        try {
+            con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/AutoPark",
+                    "root", "1234");
+
+            Statement st;
+            st = con.createStatement();
+            ResultSet rs;
+
+            if(flag) {
+                rs = st.executeQuery("select * from Orders");
+
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("user").trim();
+                    int carID = rs.getInt("carID");
+
+                    response += id + " " + carID + " " + name + " ";
+                }
+            }
+            else{
+                rs = st.executeQuery("select Orders.id, name from Orders join Cars on Cars.id = carID where Orders.user = \'" + userName + "\';");
+                while (rs.next()) {
+                    int id = rs.getInt("Orders.id");
+                    String name = rs.getString("name").trim();
+
+                    response += id + " " + name + " ";
+                }
+            }
+            rs.close();
+            st.close();
+            con.close();
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return response;
+    }
+
     public static boolean AuthorizeUser(String name, String password){
         Connection con;
         boolean result = false;

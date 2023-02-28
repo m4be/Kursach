@@ -9,8 +9,12 @@ public class Frame extends JFrame implements ActionListener {
 
 
 
-    JTable table;
-    DefaultTableModel model;
+    JTable tableMain;
+    DefaultTableModel modelMain;
+
+    JTable tableSub;
+    DefaultTableModel modelSub;
+
 
     private JPanel currentPanel;
     private JTextField name;
@@ -22,6 +26,9 @@ public class Frame extends JFrame implements ActionListener {
 
     private boolean authorized;
     private boolean admin;
+
+    ButtonColumn buttonColumnSub;
+    String login = "";
 
     Frame() {
         int width = 720;
@@ -110,46 +117,21 @@ public class Frame extends JFrame implements ActionListener {
         panel.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
         panel.setBounds(50,160,400,380);
 
-/*        String[] columnNames = {"First Name", "Last Name", "Action"};
-        Object[][] data =
-                {
-                        {"Homer", "Simpson", "delete Homer"},
-                        {"Madge", "Simpson", "delete Madge"},
-                        {"Bart",  "Simpson", "delete Bart"},
-                        {"Lisa",  "Simpson", "delete Lisa"},
-                };
-*/
-        model = new DefaultTableModel();
-        table = new JTable( model );
+        modelMain = new DefaultTableModel();
+        tableMain = new JTable( modelMain );
 
-        model.addColumn("ID");
-        model.addColumn("Name");
-        model.addColumn("Amount");
-        model.addColumn("Action");
+        modelMain.addColumn("ID");
+        modelMain.addColumn("Name");
+        modelMain.addColumn("Amount");
+        modelMain.addColumn("Action");
 
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setFillsViewportHeight(true);
+        JScrollPane scrollPane = new JScrollPane(tableMain);
+        tableMain.setFillsViewportHeight(true);
 
         scrollPane.setBounds(0,0,400,380);
 
-
-        Action delete = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                JTable table = (JTable)e.getSource();
-                int modelRow = Integer.valueOf( e.getActionCommand() );
-
-                System.out.println(modelRow);
-
-                //model.setValueAt("1",modelRow,1);
-
-                ((DefaultTableModel)table.getModel()).removeRow(modelRow);
-            }
-        };
-
-        ButtonColumn buttonColumn = new ButtonColumn(table, delete, 3);
+        ButtonColumn buttonColumn = new ButtonColumn(tableMain, delete, 3);
         buttonColumn.setMnemonic(KeyEvent.VK_D);
 
         panel.add(scrollPane);
@@ -166,10 +148,36 @@ public class Frame extends JFrame implements ActionListener {
         panel.setBounds(460,160,210,380);
 
 
+        modelSub = new DefaultTableModel();
+        tableSub = new JTable( modelSub );
+
+
+        JScrollPane scrollPane = new JScrollPane(tableSub);
+        tableSub.setFillsViewportHeight(true);
+
+        scrollPane.setBounds(0,0,210,380);
+
+
+
+        panel.add(scrollPane);
 
         return panel;
     }
 
+    Action delete = new AbstractAction()
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            JTable table = (JTable)e.getSource();
+            int modelRow = Integer.valueOf( e.getActionCommand() );
+
+            System.out.println(modelRow);
+
+            //model.setValueAt("1",modelRow,1);
+
+            ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+        }
+    };
     private JButton RefreshButton(){
         JButton button = new JButton("Refresh");
         button.setLayout(null);
@@ -184,6 +192,8 @@ public class Frame extends JFrame implements ActionListener {
         String[] str = text.split(" ");
         switch (str[0]){
             case "201":
+                exit();
+                login = name.getText();
                 authorized = true;
                 refresh();
                 JOptionPane.showMessageDialog(this,"Authorization successful",
@@ -196,6 +206,8 @@ public class Frame extends JFrame implements ActionListener {
 
             case "401":
                 admin = true;
+                login = name.getText();
+                refresh();
                 JOptionPane.showMessageDialog(this,"Admin successful",
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 break;
@@ -220,14 +232,43 @@ public class Frame extends JFrame implements ActionListener {
                 break;
 
 
-
             case "801":
                 System.out.println("\n dlina:" + (str.length - 1) + "\n");//Убрать!!!!!!!!
-                model.setRowCount(0); //Очистка таблицы
+                modelMain.setRowCount(0); //Очистка таблицы
                 for(int i = 0; i < (((str.length) - 1) / 3);i++) // Каждый 3 элемент не считая нулевого
-                    model.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"take"}); //Добавляем строки
+                    modelMain.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"take"}); //Добавляем строки
+                break;
+
+            case "901":
+                modelSub.setColumnCount(0);
+                modelSub.setRowCount(0);
+                modelSub.addColumn("id");
+                modelSub.addColumn("Car name");
+                modelSub.addColumn("action");
+                buttonColumnSub = new ButtonColumn(tableSub, delete, 2);
+                buttonColumnSub.setMnemonic(KeyEvent.VK_D);
+
+                for(int i = 0; i < (((str.length) - 1) / 2);i++) // Каждый 2 элемент не считая нулевого
+                    modelSub.addRow(new Object[]{str[1+(2*i)],str[2+(2*i)],"take"}); //Добавляем строки
+
+                break;
 
 
+            case "902":
+                modelSub.setColumnCount(0);
+                modelSub.setRowCount(0);
+                modelSub.addColumn("ID");
+                modelSub.addColumn("Car ID");
+                modelSub.addColumn("User name");
+                modelSub.addColumn("Action");
+                buttonColumnSub = new ButtonColumn(tableSub, delete, 3);
+                buttonColumnSub.setMnemonic(KeyEvent.VK_D);
+
+
+                System.out.println("\n dlina:" + (str.length - 1) + "\n");//Убрать!!!!!!!!
+                for(int i = 0; i < (((str.length) - 1) / 3);i++) // Каждый 3 элемент не считая нулевого
+                    modelSub.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"take"}); //Добавляем строки
+                break;
 
         }
 
@@ -236,8 +277,15 @@ public class Frame extends JFrame implements ActionListener {
     }
 
     void refresh(){
-        if(authorized)
+        if(authorized || admin) {
             new Sender("800", this);
+                if (admin)
+                    new Sender("900 admin", this);
+                else {
+                    new Sender("900 user " + login, this);
+                }
+
+        }
         else{
             JOptionPane.showMessageDialog(this,"You are not authorized",
                     "Fail", JOptionPane.WARNING_MESSAGE);
@@ -247,8 +295,8 @@ public class Frame extends JFrame implements ActionListener {
     void exit(){
         authorized = false;
         admin = false;
-        model.setRowCount(0);
-
+        modelMain.setRowCount(0);
+        modelSub.setRowCount(0);
     }
 
     boolean checkRegex(String name,String password){

@@ -15,6 +15,7 @@ public class Frame extends JFrame implements ActionListener {
     JTable tableSub;
     DefaultTableModel modelSub;
 
+    Frame frm = this;
 
     private JPanel currentPanel;
     private JTextField name;
@@ -28,6 +29,7 @@ public class Frame extends JFrame implements ActionListener {
     private boolean admin;
 
     ButtonColumn buttonColumnSub;
+    ButtonColumn buttonColumnMain;
     String login = "";
 
     Frame() {
@@ -131,8 +133,8 @@ public class Frame extends JFrame implements ActionListener {
 
         scrollPane.setBounds(0,0,400,380);
 
-        ButtonColumn buttonColumn = new ButtonColumn(tableMain, delete, 3);
-        buttonColumn.setMnemonic(KeyEvent.VK_D);
+        buttonColumnMain = new ButtonColumn(tableMain, delete, 3);
+        buttonColumnMain.setMnemonic(KeyEvent.VK_D);
 
         panel.add(scrollPane);
 
@@ -169,15 +171,28 @@ public class Frame extends JFrame implements ActionListener {
         public void actionPerformed(ActionEvent e)
         {
             JTable table = (JTable)e.getSource();
-            int modelRow = Integer.valueOf( e.getActionCommand() );
+            int modelRow = Integer.valueOf(e.getActionCommand() );
 
-            System.out.println(modelRow);
+            //System.out.println(modelMain.getValueAt(modelRow,0));
 
-            //model.setValueAt("1",modelRow,1);
+            String id = (String)((DefaultTableModel)table.getModel()).getValueAt(modelRow,0);
 
-            ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+            if(((DefaultTableModel)table.getModel()).equals(modelSub)){
+                new Sender("700 " + id, frm); //Sub
+            }
+            else{
+                if(!admin)
+                new Sender("600 " + id + " " + login, frm); //Main    Если Админ, то нельзя заказать технику
+                else
+                    JOptionPane.showMessageDialog(frm,"Admin can't order",
+                            "Fail", JOptionPane.WARNING_MESSAGE);
+            }
         }
     };
+
+
+
+
     private JButton RefreshButton(){
         JButton button = new JButton("Refresh");
         button.setLayout(null);
@@ -189,7 +204,8 @@ public class Frame extends JFrame implements ActionListener {
     }
 
     void getServerMessage(String text){
-        String[] str = text.split(" ");
+        System.out.println(text);
+        String[] str = text.split(";");
         switch (str[0]){
             case "201":
                 exit();
@@ -231,15 +247,40 @@ public class Frame extends JFrame implements ActionListener {
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                 break;
 
-
-            case "801":
-                System.out.println("\n dlina:" + (str.length - 1) + "\n");//Убрать!!!!!!!!
-                modelMain.setRowCount(0); //Очистка таблицы
-                for(int i = 0; i < (((str.length) - 1) / 3);i++) // Каждый 3 элемент не считая нулевого
-                    modelMain.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"take"}); //Добавляем строки
+            case "601":  //Получилось взять машину со склада (Обновляем таблицу)
+                refresh();
                 break;
 
-            case "901":
+            case "602": //Не получилось взять машину со склада (Ошибка)
+                JOptionPane.showMessageDialog(this,"Out of stock\n(Amount < 1)",
+                        "Fail", JOptionPane.WARNING_MESSAGE);
+                break;
+
+            case "701": //Получилось вернуть машину
+                refresh();
+                break;
+
+            case "702": //Не получилось
+                JOptionPane.showMessageDialog(this,"Failed to return",
+                        "Fail", JOptionPane.WARNING_MESSAGE);
+                break;
+
+            case "801": //Обновляем Main
+                System.out.println("\n dlina:" + (str.length - 1) + "\n");//Убрать!!!!!!!!
+                String action = null;
+                if(admin){
+                    action = "X";
+                }
+                else{
+                    action = "take";
+                }
+
+                modelMain.setRowCount(0); //Очистка таблицы
+                for(int i = 0; i < (((str.length) - 1) / 3);i++) // Каждый 3 элемент не считая нулевого
+                    modelMain.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],action}); //Добавляем строки
+                break;
+
+            case "901": //Sub для пользователя
                 modelSub.setColumnCount(0);
                 modelSub.setRowCount(0);
                 modelSub.addColumn("id");
@@ -249,12 +290,12 @@ public class Frame extends JFrame implements ActionListener {
                 buttonColumnSub.setMnemonic(KeyEvent.VK_D);
 
                 for(int i = 0; i < (((str.length) - 1) / 2);i++) // Каждый 2 элемент не считая нулевого
-                    modelSub.addRow(new Object[]{str[1+(2*i)],str[2+(2*i)],"take"}); //Добавляем строки
+                    modelSub.addRow(new Object[]{str[1+(2*i)],str[2+(2*i)],"remove"}); //Добавляем строки
 
                 break;
 
 
-            case "902":
+            case "902": //Sub для Админа
                 modelSub.setColumnCount(0);
                 modelSub.setRowCount(0);
                 modelSub.addColumn("ID");
@@ -267,7 +308,7 @@ public class Frame extends JFrame implements ActionListener {
 
                 System.out.println("\n dlina:" + (str.length - 1) + "\n");//Убрать!!!!!!!!
                 for(int i = 0; i < (((str.length) - 1) / 3);i++) // Каждый 3 элемент не считая нулевого
-                    modelSub.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"take"}); //Добавляем строки
+                    modelSub.addRow(new Object[]{str[1+(3*i)],str[2+(3*i)],str[3+(3*i)],"remove"}); //Добавляем строки
                 break;
 
         }
@@ -284,7 +325,6 @@ public class Frame extends JFrame implements ActionListener {
                 else {
                     new Sender("900 user " + login, this);
                 }
-
         }
         else{
             JOptionPane.showMessageDialog(this,"You are not authorized",
@@ -311,7 +351,7 @@ public class Frame extends JFrame implements ActionListener {
         switch (cmd){
             case "Auth":
                 if(checkRegex(name.getText(),password.getText())){
-                    new Sender("200 " + name.getText() + " " + password.getText(),this);
+                    new Sender("200 " + name.getText() + " " + password.getText(),frm);
                 }
                 else{
                     JOptionPane.showMessageDialog(this,regex,
@@ -320,7 +360,7 @@ public class Frame extends JFrame implements ActionListener {
                 break;
             case "Register":
                 if(checkRegex(name.getText(),password.getText())){
-                    new Sender("300 " + name.getText()+ " " + password.getText(),this);
+                    new Sender("300 " + name.getText()+ " " + password.getText(),frm);
                 }
                 else{
                     JOptionPane.showMessageDialog(this,regex,
@@ -329,7 +369,7 @@ public class Frame extends JFrame implements ActionListener {
                 break;
             case "Admin":
                 if(checkRegex(name.getText(),password.getText())){
-                    new Sender("400 " + name.getText()+ " " + password.getText(),this);
+                    new Sender("400 " + name.getText()+ " " + password.getText(),frm);
                 }
                 else{
                     JOptionPane.showMessageDialog(this,regex,
@@ -338,7 +378,7 @@ public class Frame extends JFrame implements ActionListener {
 
                 break;
             case "Exit":
-                new Sender("500",this);
+                new Sender("500",frm);
                 exit();
                 break;
             case "Refresh":
@@ -382,9 +422,11 @@ public class Frame extends JFrame implements ActionListener {
     + Добавить кнопку для удаления по аналогии с основной таблицей
 
     600 - Пользователь запрашивает технику (ID)
-    700 - Пользователь Удаляет технику их своих заказов
+    700 - Пользователь Удаляет технику из своих заказов
 
-    601 - Не удалось заказать технику(Нет на складе <1)
+    601 - Удалось заказать технику 🆗
+    602 - Не удалось заказать технику(Нет на складе <1) 🆗
+
 
 
 

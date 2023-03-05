@@ -67,22 +67,43 @@ public class Handler implements Runnable {
                     break;
                 }
                 case "800": {
-                    response = "801 " + DBControl.getData(); //Отправка таблицы
+                    response = "801;" + DBControl.getData(); //Отправка таблицы
                     break;
                 }
 
                 case "900": {
                     if(str[1].equals("admin")){
-                        response = "902 " + DBControl.getUserInfo(true, null);
+                        response = "902;" + DBControl.getUserInfo(true, null);
                     }
                     else if (str[1].equals("user")) {
-                        response = "901 " + DBControl.getUserInfo(false, str[2]);
+                        response = "901;" + DBControl.getUserInfo(false, str[2]);
                     }
                     else{
                         response = "903";
                     }
                     break;
                 }
+
+                case "600":{
+
+                    if(DBControl.TakeCar(str[2],str[1])) {
+                        response = "601";
+                    }
+                    else{
+                        response = "602";
+                    }
+                    break;
+                }
+                case "700" :{
+                    if(DBControl.GiveCar(str[1])) {
+                        response = "701";
+                    }
+                    else{
+                        response = "702";
+                    }
+                    break;
+                }
+
 
                 default: {
                     response = "Incorrect request from user! request was: " + request;

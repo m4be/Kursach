@@ -1,0 +1,44 @@
+мар. 09, 2023 2:35:34 PM Server main
+INFO:  Server has started
+мар. 09, 2023 2:35:38 PM Handler run
+INFO: [127.0.0.1] User : [Petr] logged out
+мар. 09, 2023 2:35:49 PM Handler run
+INFO: [127.0.0.1] Authorization for [Petr] was successful
+мар. 09, 2023 2:35:49 PM Handler run
+INFO: [127.0.0.1] Sending main table
+мар. 09, 2023 2:35:49 PM Handler run
+INFO: [127.0.0.1] Sending sub table for user
+мар. 09, 2023 2:36:23 PM Handler run
+INFO: [127.0.0.1] User: [Petr] successfully obtained a car: [1]
+мар. 09, 2023 2:36:23 PM Handler run
+INFO: [127.0.0.1] Sending main table
+мар. 09, 2023 2:36:23 PM Handler run
+INFO: [127.0.0.1] Sending sub table for user
+мар. 09, 2023 2:36:37 PM Handler run
+INFO: [127.0.0.1] Car: [11] was successfully returned
+мар. 09, 2023 2:36:37 PM Handler run
+INFO: [127.0.0.1] Sending main table
+мар. 09, 2023 2:36:37 PM Handler run
+INFO: [127.0.0.1] Sending sub table for user
+мар. 09, 2023 2:37:43 PM Handler run
+INFO: [127.0.0.1] User : [Petr] logged out
+мар. 09, 2023 2:37:47 PM Handler run
+INFO: [127.0.0.1] Authorization for [Ivan] was successful
+мар. 09, 2023 2:37:47 PM Handler run
+INFO: [127.0.0.1] Sending main table
+мар. 09, 2023 2:37:47 PM Handler run
+INFO: [127.0.0.1] Sending sub table for user
+мар. 09, 2023 2:37:50 PM Handler run
+INFO: [127.0.0.1] User: [Ivan] successfully obtained a car: [8]
+мар. 09, 2023 2:37:50 PM Handler run
+INFO: [127.0.0.1] Sending main table
+мар. 09, 2023 2:37:50 PM Handler run
+INFO: [127.0.0.1] Sending sub table for user
+мар. 09, 2023 2:37:52 PM Handler run
+INFO: [127.0.0.1] Authorization for [Petr] was successful
+мар. 09, 2023 2:37:52 PM Handler run
+INFO: [127.0.0.1] Sending main table
+мар. 09, 2023 2:37:52 PM Handler run
+INFO: [127.0.0.1] Sending sub table for user
+мар. 09, 2023 2:37:54 PM Handler run
+INFO: [127.0.0.1] User : [Ivan] logged out

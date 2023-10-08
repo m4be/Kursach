@@ -1,13 +1,12 @@
 import java.io.*;
 import java.net.Socket;
-
+import java.util.logging.Level;
 
 
 public class Handler implements Runnable {
     private final Socket clientSocket;
-
-    BufferedReader reader; // поток чтения из сокета
-    BufferedWriter writer; // поток записи в сокет
+    BufferedReader reader;
+    BufferedWriter writer;
 
     public Handler(Socket socket){
         clientSocket = socket;
@@ -22,49 +21,60 @@ public class Handler implements Runnable {
                     new InputStreamReader(
                             clientSocket.getInputStream()));
         } catch (IOException e) {
+            Server.LOG.log(Level.WARNING, "READER/WRITER FAILURE:" + e);
             throw new RuntimeException(e);
         }
-
             String response;
-            String request;
+            String[] request;
             try {
-                request = reader.readLine();
-                System.out.println("Client: " + request);
-                switch (request) {
-                    case "Penis": {
-                        response = "Viewing form server! ";
-                        break;
+                String serverInput = reader.readLine();
+                System.out.println(serverInput);
+                Server.LOG.log(Level.INFO,"READER STARTED");
+                String option = serverInput.split(";")[0];
+                Server.LOG.log(Level.INFO,"CLIENT REQUEST ACCEPTED: " + option);
+                request = serverInput.substring(option.length()+1).split(";");
+                switch (option) {
+                    case "FtchOrd" -> response = "OrdInf;" + DBControl.fetchOrders();
+                    case "FtchMnu" -> response = "MnuInf;" + DBControl.fetchMenu();
+                    case "FtchEmp" -> response = "EmpInf;" + DBControl.fetchEmployees();
+                    case "UpdOrd" -> {
+                        response = "OrdUpd;";
+                        Server.LOG.log(Level.INFO, DBControl.updateOrders(request));
                     }
-                    case "Pizda": {
-                        response = "Fetching form server! " + DBControl.orderFetch();
-                        break;
+                    case "UpdMnu" -> {
+                        response = "MnuUpd;";
+                        Server.LOG.log(Level.INFO,DBControl.updateMenu(request));
                     }
-                    case "Boobs": {
-                        response = "Submitting to server! ";
-                        break;
+                    case "UpdEmp" -> {
+                        response = "EmpUpd;";
+                        Server.LOG.log(Level.INFO,DBControl.updateEmployees(request));
                     }
-                    default: {
+                    case "Reg" -> response = DBControl.addUser(request[0], request[1]);
+                    case "Auth" -> response = DBControl.checkUser(request[0], request[1]);
+                    default ->{
                         response = "Incorrect request from user! ";
-                        break;
+                        Server.LOG.log(Level.WARNING, "INCORRECT CLIENT REQUEST");
                     }
                 }
-                writer.write(response + request);
+                writer.write(response);
+                Server.LOG.log(Level.INFO, "SERVER RESPONSE TO CLIENT: " + response);
                 writer.flush();
                 writer.newLine();
             } catch (IOException e) {
-                e.printStackTrace();
-            }
-            finally {
+                Server.LOG.log(Level.INFO, "CLIENT REQUEST HANDLING ERROR: " + e);
+            } finally {
                 try {
                     if (writer != null) {
                         writer.close();
+                        Server.LOG.log(Level.INFO, "WRITER CLOSED");
                     }
                     if (reader != null) {
                         reader.close();
                         clientSocket.close();
+                        Server.LOG.log(Level.INFO, "CLIENT SOCKET CLOSED. READER CLOSED");
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Server.LOG.log(Level.WARNING,"READER/WRITER/SOCKET CLOSURE ERROR:" + e);
                 }
             }
     }
